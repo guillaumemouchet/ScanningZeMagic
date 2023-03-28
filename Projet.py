@@ -19,12 +19,12 @@ img_heigth= 1080
 
 img = cv.imread(filename)
 print(img.shape)
-
+img_copy = img
 #Changing the size of the image, while keeping the ratio
 ratio_y = 1
 if(img.shape[1]>img_width):
     ratio_y = img.shape[1]/img_width
-    img_copy = cv.resize(img, dsize=(math.ceil(img.shape[1]/ratio_y),math.ceil(img.shape[0]/ratio_y)))
+    img_copy = cv.resize(img_copy, dsize=(math.ceil(img.shape[1]/ratio_y),math.ceil(img.shape[0]/ratio_y)))
     
 cv.imshow("resized",img_copy)
 cv.waitKey(0)
@@ -80,36 +80,67 @@ for contour in contours:
         
         
         #unwrap the found images
-        rect = cv.minAreaRect(approx)
+        rect = cv.minAreaRect(approx)        
         corners = cv.boxPoints(rect).astype(np.float32)
 
         #Detect the rotation of the image, a while can be done instead of an if
-        error_value = 5
-        delta_a = abs(corners[0][0]-corners[3][0])
-        if(delta_a >= error_value): # if we are bigger than the error, we need to rotate the corners to put them in the right order
+        error_value = 10
+        print("-------------------------------------")
+        print(corners)
+        # delta_a = abs(corners[0][0]-corners[3][0])
+        # delta_c = abs(corners[1][0]-corners[2][0])
+        # delta_b = abs(corners[0][1]-corners[1][1])
+        # delta_d = abs(corners[2][1]-corners[3][1])
+        delta_y_1_2 = math.pow(abs(corners[0][1]-corners[1][1]),2)+math.pow(abs(corners[0][0]-corners[1][0]),2)
+        delta_y_2_3= math.pow(abs(corners[1][1]-corners[2][1]),2)+math.pow(abs(corners[1][0]-corners[2][0]),2)
+        print(rect[-1])
+        
+        if(delta_y_1_2 > delta_y_2_3): # if we are bigger than the error, we need to rotate the corners to put them in the right order
+            print("IN a")
             corners = np.array([corners[1],corners[2],corners[3],corners[0]])
+        print(corners)
+
+        #  if(delta_a >= error_value): # if we are bigger than the error, we need to rotate the corners to put them in the right order
+        #     print("IN a")
+        #     corners = np.array([corners[1],corners[2],corners[3],corners[0]])
+        # # Il faut que le premier corner soit celui en bas à gauche de l'image
+        
+        # Marche pour les images qui sont droites, ne fonctionne pas pour les images penchées
         # GOOD IMAGE CORNERS
         # corners [[a. b.]
         #         [c.  b.]
         #         [c. d.]
         #         [ a. d.]]
-        # WRONG IMAGE CORNERS -> corners[0] must be at the end
-        # corners [[a  d ]
+        # WRONG IMAGE CORNERS
+        # corners [[a  d]
         #         [a   b]
         #         [c   b]
-        #         [c.  d ]
-        # 
+        #         [c.  d]
+        
+        # IMAGE PENCHEE
+        # GOOD IMAGE CORNERS
+        # corners [[a  b ]
+                #  [a   c]
+                #  [d   c ]
+                #  [d  b      ]]
+        # WRONG IMAGE CORNERS
+        # corners [[a. b]
+        #  [d  b]
+        #  [d   c]
+        #  [a   c]]
+
+        
         
         # unwrap the image with a set destination corners
         dest_corners = np.array([[0, 0], [500, 0], [500, 750], [0, 750]], dtype=np.float32)
         M = cv.getPerspectiveTransform(corners, dest_corners)
         unwrapped = cv.warpPerspective(img, M, (500, 750))
 
+        
         # Another way to rotate the image but the proportion are kept and the image is wide
         # angle = rect[-1]
         # if angle < 90:
-        #     unwrapped = cv.rotate(unwrapped, cv.ROTATE_90_COUNTERCLOCKWISE)            
-
+        #     unwrapped = cv.rotate(unwrapped, cv.ROTATE_90_COUNTERCLOCKWISE) 
         list_image.append(unwrapped)
         
 # Custom window
