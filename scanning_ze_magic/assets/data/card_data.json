@@ -1,0 +1,20 @@
+[
+    {
+    "name": "Chandra Waifu",
+    "extension": "Kaladesh",
+    "image": "magic_card.png",
+    "creature_type": "Mega waifu material",
+    "power": "6",
+    "defense": "9",
+    "colors": ["r"]
+    },    
+    {
+    "name": "Atraxa lol",
+    "extension": "Phyrexia",
+    "image": "magic_card.png",
+    "creature_type": "Running out of ideas for a joke",
+    "power": "7",
+    "defense": "7",
+    "colors": ["w", "u", "g", "b"]
+    }
+]
