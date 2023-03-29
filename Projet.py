@@ -5,8 +5,8 @@ import math
     
 filename = 'images/multiple_image.jpg' 
 
-filename = 'images/mtg_cards_4.jpeg' 
-filename = 'images/mtg_phone.jpg' 
+#filename = 'images/mtg_cards_4.jpeg' 
+filename = 'images/mtg_phone3.jpg' 
 
 # convert to the original size for the border
 def round_ratio(x):
@@ -47,7 +47,7 @@ contours, hierarchy = cv.findContours(img_edges, cv.RETR_EXTERNAL, cv.CHAIN_APPR
 
 # 63 × 88 mm a magic card size
 
-#################3 Not needed since the images are resized ###############################
+################# Not needed since the images are resized ###############################
 #min_area = 18000
 #max_area = min_area + 12000
 # 48000-60000 best for multiple_image.jpg => 1280x720 pixels => 37.5
@@ -56,7 +56,6 @@ contours, hierarchy = cv.findContours(img_edges, cv.RETR_EXTERNAL, cv.CHAIN_APPR
 # The conclusion is the best spacing between cards is 12'000
 # but depends on the cards size in the first place
 # Can a pre-traitement can be done to determine the best spacing for a specific image
-
 #contours = [cnt for cnt in contours if cv.contourArea(cnt) > min_area and cv.contourArea(cnt) < max_area] 
 # custom function
 
@@ -96,7 +95,7 @@ for contour in contours:
         print(rect[-1])
         
         if(delta_y_1_2 > delta_y_2_3): # if we are bigger than the error, we need to rotate the corners to put them in the right order
-            print("IN a")
+            print("IN delta")
             corners = np.array([corners[1],corners[2],corners[3],corners[0]])
         print(corners)
 
