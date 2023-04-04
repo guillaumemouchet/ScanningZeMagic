@@ -6,7 +6,7 @@ import math
 filename = 'images/multiple_image.jpg' 
 
 #filename = 'images/mtg_cards_4.jpeg' 
-filename = 'images/mtg_phone3.jpg' 
+#filename = 'images/mtg_phone.jpg' 
 
 # convert to the original size for the border
 def round_ratio(x):
