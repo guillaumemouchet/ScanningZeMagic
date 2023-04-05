@@ -5,20 +5,6 @@ from matplotlib import pyplot as plt
 import os
 from pytesseract import Output
 
-# Personnal photos
-filenameRefW = 'images/references/white.png'
-filenameRefU = 'images/references/blue.png'
-filenameRefB = 'images/references/black.png'
-filenameRefR = 'images/references/red.png'
-filenameRefG = 'images/references/green.png'
-
-# Photos from the internet
-filenameRefW = 'images/references/W.png'
-filenameRefU = 'images/references/U.png'
-filenameRefB = 'images/references/B.png'
-filenameRefR = 'images/references/R.png'
-filenameRefG = 'images/references/G.png'
-
 # Detection de référence
 filenameResult = 'images/Results/'
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
