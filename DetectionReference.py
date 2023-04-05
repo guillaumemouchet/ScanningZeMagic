@@ -20,26 +20,33 @@ filenameRefG = 'images/references/G.png'
 # Detection de référence
 filenameResult = 'images/Results/'
 
-def isColor(imgResultGrey, filenameRef):
+def is_color(imgResultGrey, filenameRef):
 
     imgRef = cv.imread(filenameRef)
-    #for ratio in range(14,16,1):
+    
+    # Change the size of the image for better detection
     imgRef = cv.resize(imgRef, dsize=(math.ceil(30),math.ceil(30)))
+    
+    
     imgRefGrey = cv.cvtColor(imgRef,cv.COLOR_BGR2GRAY)
 
-    #cv.imshow("ref", imgRef)
-
-    w,h= imgRefGrey.shape
     imgCopy = imgResultGrey.copy()
+    
+    # Match the reference with the copied image
     method = cv.TM_CCOEFF_NORMED
-
     res = cv.matchTemplate(imgCopy,imgRefGrey,method)
-    min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 
+    # Get the max for each result
     listProbability = []
-
     for i in res:
         listProbability.append(np.amax(i))
+
+    ##
+    # SHOW RESULTS
+    ##
+    # w,h= imgRefGrey.shape
+
+    # min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 
     # top_left = max_loc
 
@@ -52,32 +59,39 @@ def isColor(imgResultGrey, filenameRef):
     # plt.suptitle(method)
     # plt.show()
 
+    #Return the max probability
     return max(listProbability)
 
-def whatColor(imgResultGrey):
+def what_color(imgResultGrey):
     colorProbability = {}
     # Two sets of references
     # One found on the internet 
     # The other are picture of me
     # Maybe try with both and keep the best values
-    colorProbability.update({"White" : isColor(imgResultGrey, filenameRefW)})
-    colorProbability.update({"blUe" : isColor(imgResultGrey, filenameRefU)})
-    colorProbability.update({"Black" : isColor(imgResultGrey, filenameRefB)})
-    colorProbability.update({"Red" : isColor(imgResultGrey, filenameRefR)})
-    colorProbability.update({"Green" : isColor(imgResultGrey, filenameRefG)})
-    print(colorProbability)
+    
+    # Update the each specific color probability
+    colorProbability.update({"White" : is_color(imgResultGrey, filenameRefW)})
+    colorProbability.update({"blUe" : is_color(imgResultGrey, filenameRefU)})
+    colorProbability.update({"Black" : is_color(imgResultGrey, filenameRefB)})
+    colorProbability.update({"Red" : is_color(imgResultGrey, filenameRefR)})
+    colorProbability.update({"Green" : is_color(imgResultGrey, filenameRefG)})
+
     threshold = 0.5
-    listColors = {}     
+    listColors = {}  
+    
+    #Get the colors that could be right (For multiple color cards)
     print("The card correspond to all those colors :")
     for key in colorProbability:
         if(colorProbability[key] > threshold):
             print("->", key)
             listColors.update({key : colorProbability[key]})
+    # Get the most probable color
     print("Most probable color is", max(colorProbability, key=colorProbability.get))
 
 
-def testAllCards():
+def test_all_cards():
     name_of_files = []
+    # Get all cards in the result file
     directories = os.listdir(filenameResult)
     for file in directories:
         name_of_files.append(file)
@@ -94,7 +108,10 @@ def testAllCards():
         img_crop= imgResult[0:100, h-200:h]
         #convert to grey
         imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
-        whatColor(imgResultGrey)
+        what_color(imgResultGrey)
 
 
-testAllCards()
+##
+# MAIN
+##
+test_all_cards()
