@@ -7,7 +7,7 @@ filename = 'images/multiple_image.jpg'
 
 #filename = 'images/mtg_cards_4.jpeg' 
 filename = 'images/mtg_phone.jpg' 
-name = 'mutiple'
+name = 'blue'
 filename = 'images/'+name+'.jpg'
 # convert to the original size for the border
 def round_ratio(x):
