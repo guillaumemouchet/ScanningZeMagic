@@ -1,11 +1,9 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../models/card_model.dart';
 
+//https://github.com/flutter-devs/flutter_stacked_card_carousel_demo/blob/master/lib/style_card.dart
 class CardItemDisplay extends StatelessWidget {
   final CardItem card;
 
@@ -19,15 +17,14 @@ class CardItemDisplay extends StatelessWidget {
         padding: const EdgeInsets.all(12.0),
         child: Column(
           children: <Widget>[
-            Container(
+            SizedBox(
                 width: MediaQuery.of(context).size.width * 0.7,
                 height: MediaQuery.of(context).size.width * 0.65,
-                child: Image.asset("assets/img/${card.image}")),
-            //SvgPicture.asset(card.image, semanticsLabel: 'card image')),
+                child: Image.memory(card.image)),
             const SizedBox(height: 5),
             Text(
               card.name,
-              style: TextStyle(
+              style: const TextStyle(
                   color: Colors.pinkAccent,
                   fontSize: 22,
                   fontWeight: FontWeight.bold),
@@ -37,7 +34,7 @@ class CardItemDisplay extends StatelessWidget {
             const SizedBox(height: 5),
             Text(
               card.extension,
-              style: TextStyle(color: Colors.black),
+              style: const TextStyle(color: Colors.black),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 5),
@@ -48,7 +45,6 @@ class CardItemDisplay extends StatelessWidget {
                         .map(
                           (color) => SvgPicture.asset(
                             'assets/img/$color.svg',
-                            // adjust the width as per your requirements
                           ),
                         )
                         .toList(),

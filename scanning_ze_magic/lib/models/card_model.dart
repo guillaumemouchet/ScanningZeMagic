@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 
 class CardItem {
   final String name;
   final String extension;
-  final String image;
+  final Uint8List image;
   final String creatureType;
   final int power;
   final int defense;
@@ -23,7 +25,7 @@ class CardItem {
     return CardItem(
         name: json["name"],
         extension: json["extension"],
-        image: json["image"],
+        image: base64Decode(json["image"]),
         creatureType: json["creature_type"],
         power: int.parse(json["power"].toString()),
         defense: int.parse(json["defense"].toString()),

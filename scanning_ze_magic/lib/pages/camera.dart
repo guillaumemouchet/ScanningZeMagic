@@ -1,9 +1,6 @@
-import 'package:camera/camera.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:scanning_ze_magic/pages/card_carousel.dart';
@@ -102,6 +99,18 @@ class DisplayPictureScreen extends StatelessWidget {
   final String imagePath;
   const DisplayPictureScreen({super.key, required this.imagePath});
 
+  //https://stackoverflow.com/questions/44841729/how-to-upload-images-to-server-in-flutter/49645074#49645074
+  Future<Response<String>> uploadImage(File file) async {
+    String fileName = file.path.split('/').last;
+    final Dio dio = Dio();
+    FormData formData = FormData.fromMap({
+      "file": await MultipartFile.fromFile(file.path, filename: fileName),
+    });
+    Response<String> response =
+        await dio.post("http://10.0.2.2:5000/uploadImage", data: formData);
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,19 +122,15 @@ class DisplayPictureScreen extends StatelessWidget {
             ElevatedButton(
                 onPressed: () async {
                   print("sending");
-                  //final headers = {'Content-Type': 'application/json'};
-                  // final response = await http.get(
-                  //     Uri.parse('http://127.0.0.1:5000/test'),
-                  //     headers: headers);
-                  final Dio dio = new Dio();
                   try {
-                    //final response = await dio.get("http://10.0.2.2:5000/test");
-                    //print(response.data);
+                    final response = await uploadImage(File(imagePath));
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => CardCarousel()));
-                  } on DioError catch (e) {
+                            builder: (context) => CardCarousel(
+                                  response: response,
+                                )));
+                  } on Error catch (e) {
                     print(e);
                   }
                 },
