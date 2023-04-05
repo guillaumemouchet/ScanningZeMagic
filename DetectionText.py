@@ -23,7 +23,7 @@ filenameRefG = 'images/references/G.png'
 filenameResult = 'images/Results/'
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
-def whatText(imgResultGrey):
+def old_version(imgResultGrey):
     img_blur = cv.GaussianBlur(imgResultGrey, (3, 3), 0)
 
     # Performing OTSU threshold
@@ -68,43 +68,31 @@ def whatText(imgResultGrey):
     cv.waitKey(0)
 
 
-
-
-def whatText2(imgResultGrey):
+def what_text(imgResultGrey):
+    allText = ""
     img_blur = cv.GaussianBlur(imgResultGrey, (3, 3), 0)
-
+    
+    # Get the data of the image with Tesseract
     results = pytesseract.image_to_data(img_blur, output_type=Output.DICT)
-    for i in range(0, len(results["text"])):
-        # We can then extract the bounding box coordinates
-        # of the text region from  the current result
-        x = results["left"][i]
-        y = results["top"][i]
-        w = results["width"][i]
-        h = results["height"][i]
-        
-        # We will also extract the OCR text itself along
-        # with the confidence of the text localization
+    
+    for i in range(0, len(results["text"])):       
+        # Get text and confidance in the result
         text = results["text"][i]
         conf = int(results["conf"][i])
         
-        # filter out weak confidence text localizations
-        if conf > 85:
+        # Filter out week confidance and empty text
+        if conf > 85 and not(text.isspace()) :
+            allText += text+ " "
             
-            # We will display the confidence and text to
-            # our terminal
+            # Show the confidence of each text
             print("Confidence: {}".format(conf))
             print("Text: {}".format(text))
             print("")
-            
-            # We then strip out non-ASCII text so we can
-            # draw the text on the image We will be using
-            # OpenCV, then draw a bounding box around the
-            # text along with the text itself
+
             text = "".join(text).strip()
-            cv.rectangle(imgResultGrey,
-                        (x, y),
-                        (x + w, y + h),
-                        (0, 0, 255), 2)
+            # Write text on the image
+            x = results["left"][i]
+            y = results["top"][i]
             cv.putText(imgResultGrey,
                         text,
                         (x, y - 10), 
@@ -112,10 +100,11 @@ def whatText2(imgResultGrey):
                         1.2, (0, 255, 255), 3)
     cv.imshow("im2", imgResultGrey)
     cv.waitKey(0)
+    return allText
 
 
 
-def testAllCards():
+def test_all_cards():
     name_of_files = []
     directories = os.listdir(filenameResult)
     for file in directories:
@@ -129,12 +118,13 @@ def testAllCards():
         imgResult = cv.imread(filenameResult+name)
 
         # take only top right corner
-        w,h,z= imgResult.shape
-        img_crop= imgResult[0:100, 0:400]
+        img_crop = imgResult[0:100, 0:400]
         #convert to grey
         imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
 
-        whatText2(imgResultGrey)
+        print(what_text(imgResultGrey))
 
-
-testAllCards()
+##
+# MAIN
+##
+test_all_cards()
