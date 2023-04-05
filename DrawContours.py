@@ -6,12 +6,12 @@ import math
 filename = 'images/multiple_image.jpg' 
 
 #filename = 'images/mtg_cards_4.jpeg' 
-#filename = 'images/mtg_phone.jpg' 
-
+filename = 'images/mtg_phone.jpg' 
+name = 'mutiple'
+filename = 'images/'+name+'.jpg'
 # convert to the original size for the border
 def round_ratio(x):
   return round(x*ratio_y)
-
 
 # 720x1080 best resolution for the corner detection
 img_width= 720
@@ -94,6 +94,10 @@ for contour in contours:
         delta_y_2_3= math.pow(abs(corners[1][1]-corners[2][1]),2)+math.pow(abs(corners[1][0]-corners[2][0]),2)
         print(rect[-1])
         
+        ## TODO Detect if the size found correspond to a magic card format
+        # 63 × 88 mm a magic card size
+
+        
         if(delta_y_1_2 > delta_y_2_3): # if we are bigger than the error, we need to rotate the corners to put them in the right order
             print("IN delta")
             corners = np.array([corners[1],corners[2],corners[3],corners[0]])
@@ -131,9 +135,9 @@ for contour in contours:
         
         
         # unwrap the image with a set destination corners
-        dest_corners = np.array([[0, 0], [500, 0], [500, 750], [0, 750]], dtype=np.float32)
+        dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
         M = cv.getPerspectiveTransform(corners, dest_corners)
-        unwrapped = cv.warpPerspective(img, M, (500, 750))
+        unwrapped = cv.warpPerspective(img, M, (630, 880))
 
         
         # Another way to rotate the image but the proportion are kept and the image is wide
@@ -147,8 +151,11 @@ cv.namedWindow("original", cv.WINDOW_NORMAL)
 cv.imshow("original",img)
 cv.waitKey(0) 
 
+i = 0
 for img in list_image:
     cv.imshow('unwrapped', img)
+    cv.imwrite('images/Results/'+name+str(i)+'.png', img)
+    i +=1
     cv.waitKey(0) 
 
 cv.waitKey(0) 
