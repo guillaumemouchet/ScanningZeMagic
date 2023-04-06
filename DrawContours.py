@@ -145,18 +145,31 @@ def detect_the_contours(img_edges, img):
             delta_y_1_2 = math.pow(abs(corners[0][1]-corners[1][1]),2)+math.pow(abs(corners[0][0]-corners[1][0]),2)
             delta_y_2_3 = math.pow(abs(corners[1][1]-corners[2][1]),2)+math.pow(abs(corners[1][0]-corners[2][0]),2)
             
+       
+
             # We compare that the height is bigger than the width or else 
             if(delta_y_1_2 > delta_y_2_3):
+                print("rotation")
                 corners = np.array([corners[1],corners[2],corners[3],corners[0]])
+                
+            # Check if it respects a magic the gathering card format
+            mtg_factor = 88/63
+            obj_factor = (delta_y_2_3/88)/(delta_y_1_2/63)
+            error_margin = 0.1
+            if(abs(obj_factor-mtg_factor) < error_margin):
+                print("It respect a magic card factor")
+                print("This factor is :", obj_factor)
+                print("The official mtg factor is : ", mtg_factor)
+                
+                # 63 × 88 mm a magic card size
 
+                # The size is made on the official magic the gathering card format
+                # unwrap the image with a set destination corners
+                dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
+                M = cv.getPerspectiveTransform(corners, dest_corners)
+                unwrapped = cv.warpPerspective(img, M, (630, 880))
 
-            # The size is made on the official magic the gathering card format
-            # unwrap the image with a set destination corners
-            dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
-            M = cv.getPerspectiveTransform(corners, dest_corners)
-            unwrapped = cv.warpPerspective(img, M, (630, 880))
-
-            list_image.append(unwrapped)
+                list_image.append(unwrapped)
             
             return list_image
         
