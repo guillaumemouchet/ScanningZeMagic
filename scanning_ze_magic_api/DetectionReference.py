@@ -11,11 +11,11 @@ filenameRefR = 'images/references/red.png'
 filenameRefG = 'images/references/green.png'
 
 # Photos from the internet
-filenameRefW = 'images/references/W.png'
-filenameRefU = 'images/references/U.png'
-filenameRefB = 'images/references/B.png'
-filenameRefR = 'images/references/R.png'
-filenameRefG = 'images/references/G.png'
+filenameRefWInternet = 'images/references/W.png'
+filenameRefUInternet = 'images/references/U.png'
+filenameRefBInternet = 'images/references/B.png'
+filenameRefRInternet = 'images/references/R.png'
+filenameRefGInternet = 'images/references/G.png'
 
 # Detection de référence
 filenameResult = 'images/Results/'
@@ -69,13 +69,19 @@ def what_color(imgResultGrey):
     # The other are picture of me
     # Maybe try with both and keep the best values
     
-    # Update the each specific color probability
-    colorProbability.update({"White" : is_color(imgResultGrey, filenameRefW)})
-    colorProbability.update({"blUe" : is_color(imgResultGrey, filenameRefU)})
-    colorProbability.update({"Black" : is_color(imgResultGrey, filenameRefB)})
-    colorProbability.update({"Red" : is_color(imgResultGrey, filenameRefR)})
-    colorProbability.update({"Green" : is_color(imgResultGrey, filenameRefG)})
+    # # Update the each specific color probability
+    # colorProbability.update({"White" : is_color(imgResultGrey, filenameRefW)})
+    # colorProbability.update({"blUe" : is_color(imgResultGrey, filenameRefU)})
+    # colorProbability.update({"Black" : is_color(imgResultGrey, filenameRefB)})
+    # colorProbability.update({"Red" : is_color(imgResultGrey, filenameRefR)})
+    # colorProbability.update({"Green" : is_color(imgResultGrey, filenameRefG)})
 
+ # Update the each specific color probability
+    colorProbability.update({"White" :  (is_color(imgResultGrey, filenameRefW)+is_color(imgResultGrey, filenameRefWInternet))/2})
+    colorProbability.update({"blUe" : (is_color(imgResultGrey, filenameRefU)+is_color(imgResultGrey, filenameRefUInternet))/2})
+    colorProbability.update({"Black" : (is_color(imgResultGrey, filenameRefB)+is_color(imgResultGrey, filenameRefBInternet))/2})
+    colorProbability.update({"Red" : (is_color(imgResultGrey, filenameRefR)+is_color(imgResultGrey, filenameRefRInternet))/2})
+    colorProbability.update({"Green" : (is_color(imgResultGrey, filenameRefG)+is_color(imgResultGrey, filenameRefGInternet))/2})
     threshold = 0.5
     listColors = {}  
     
@@ -122,6 +128,6 @@ def test_card(imgResult):
 # MAIN
 ##
 if __name__ == "__main__" :        
-    #test_all_cards()
-    img = cv.imread('images/Results/mtg_phone0.png')
-    test_card(img)
+    test_all_cards()
+    # img = cv.imread('images/Results/mtg_phone0.png')
+    # test_card(img)
