@@ -73,6 +73,7 @@ flutter:
   assets:
     - assets/data/card_data.json
     - assets/img/
+    - assets/img/mtg_phone.jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

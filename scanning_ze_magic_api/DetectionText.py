@@ -64,7 +64,7 @@ def what_text(imgResultGrey):
     for i in range(0, len(results["text"])):       
         # Get text and confidance in the result
         text = results["text"][i]
-        conf = int(results["conf"][i])
+        conf = float(results["conf"][i])
         
         # Filter out week confidance and empty text
         if conf > 85 and not(text.isspace()) :
@@ -110,7 +110,18 @@ def test_all_cards():
 
         print(what_text(imgResultGrey))
 
+def test_card(imgResult):
+    # take only top right corner
+    img_crop = imgResult[0:100, 0:400]
+    #convert to grey
+    imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
+
+    return what_text(imgResultGrey)
+    
 ##
 # MAIN
 ##
-test_all_cards()
+if __name__ == "__main__" :        
+    #test_all_cards()
+    img = cv.imread('images/Results/mtg_phone0.png')
+    print(test_card(img))

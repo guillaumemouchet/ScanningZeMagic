@@ -87,6 +87,7 @@ def what_color(imgResultGrey):
             listColors.update({key : colorProbability[key]})
     # Get the most probable color
     print("Most probable color is", max(colorProbability, key=colorProbability.get))
+    return {"Most" : max(colorProbability, key=colorProbability.get), "listColors" : listColors}
 
 
 def test_all_cards():
@@ -110,8 +111,17 @@ def test_all_cards():
         imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
         what_color(imgResultGrey)
 
-
+def test_card(imgResult):
+    # take only top right corner
+    w,h,z= imgResult.shape
+    img_crop= imgResult[0:100, h-200:h]
+    #convert to grey
+    imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
+    return what_color(imgResultGrey)
 ##
 # MAIN
 ##
-test_all_cards()
+if __name__ == "__main__" :        
+    #test_all_cards()
+    img = cv.imread('images/Results/mtg_phone0.png')
+    test_card(img)

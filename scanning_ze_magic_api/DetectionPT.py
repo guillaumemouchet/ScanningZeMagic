@@ -29,6 +29,7 @@ def what_text(imgResultGrey):
 
     ## And erosion of 6 works for blue
     print(results)
+    power, toughness = "NONE", "NONE"
     if results.strip() == '*/*': # * the value is changing
         power, toughness = 0, 0
     elif 'X' in results: # X is defined by the cost
@@ -43,7 +44,7 @@ def what_text(imgResultGrey):
     print(f'Power: {power}, Toughness: {toughness}')
     cv.imshow("im2", gray)
     cv.waitKey(0)
-    return allText
+    return (power, toughness)
 
 def what_text2(imgResultGrey):
     allText = ""
@@ -113,7 +114,7 @@ def test_all_cards():
         imgResult = cv.imread(filenameResult+name)
         w,h,z= imgResult.shape
 
-        # take only top right corner
+        # take only bottom right corner
         img_crop = imgResult[w-150:w, h-250:h]
 
         #convert to grey
@@ -121,7 +122,19 @@ def test_all_cards():
 
         print(what_text(imgResultGrey))
 
+def test_card(imgResult):
+    w,h,z= imgResult.shape
+
+    # take only bottom right corner
+    img_crop = imgResult[w-150:w, h-250:h]
+       #convert to grey
+    imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
+
+    return what_text(imgResultGrey)
 ##
 # MAIN
 ##
-test_all_cards()
+if __name__ == "__main__" :        
+    #test_all_cards()
+    img = cv.imread('images/Results/mtg_phone0.png')
+    print(test_card(img))

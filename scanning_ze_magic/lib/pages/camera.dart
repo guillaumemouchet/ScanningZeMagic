@@ -1,6 +1,9 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 
 import 'package:scanning_ze_magic/pages/card_carousel.dart';
@@ -102,12 +105,29 @@ class DisplayPictureScreen extends StatelessWidget {
   //https://stackoverflow.com/questions/44841729/how-to-upload-images-to-server-in-flutter/49645074#49645074
   Future<Response<String>> uploadImage(File file) async {
     String fileName = file.path.split('/').last;
+    print(file.path);
     final Dio dio = Dio();
     FormData formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(file.path, filename: fileName),
     });
     Response<String> response =
         await dio.post("http://10.0.2.2:5000/uploadImage", data: formData);
+    return response;
+  }
+
+  Future<Response<String>> sendAssetImage() async {
+    ByteData assetData = await rootBundle.load("assets/img/mtg_phone.jpg");
+    List<int> bytes = assetData.buffer.asUint8List();
+    FormData formData = FormData.fromMap(
+        {'file': MultipartFile.fromBytes(bytes, filename: 'mtg_phone.jpg')});
+
+    final Dio dio = Dio();
+
+    dio.options.receiveTimeout = Duration(seconds: 30);
+    Response<String> response =
+        await dio.post("http://10.0.2.2:5000/uploadImage", data: formData);
+    print('Response status: ${response.statusCode}');
+    print('Response data: ${response.data}');
     return response;
   }
 
@@ -123,7 +143,8 @@ class DisplayPictureScreen extends StatelessWidget {
                 onPressed: () async {
                   print("sending");
                   try {
-                    final response = await uploadImage(File(imagePath));
+                    //final response = await uploadImage(File(imagePath));
+                    final response = await sendAssetImage();
                     Navigator.push(
                         context,
                         MaterialPageRoute(

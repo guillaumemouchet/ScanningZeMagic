@@ -1,9 +1,8 @@
 import cv2 as cv
 import numpy as np 
-from matplotlib import pyplot as plt
 import math
 
-name = 'blue'
+name = 'mtg_phone'
 filename = 'images/'+name+'.jpg'
 RATIO_Y =1
 
@@ -30,8 +29,8 @@ def set_up_image(img):
     
     img_copy = resize_image(img)
         
-    cv.imshow("resized",img_copy)
-    cv.waitKey(0)
+    #cv.imshow("resized",img_copy)
+    #cv.waitKey(0)
 
     #Normalize the copied image copied
     img_normalized = np.zeros((800, 800))
@@ -152,26 +151,33 @@ def detect_the_contours(img_edges, img):
                 print("rotation")
                 corners = np.array([corners[1],corners[2],corners[3],corners[0]])
                 
+            # TODO Check if it correspond to a magic the gathering card format 
             # Check if it respects a magic the gathering card format
-            mtg_factor = 88/63
-            obj_factor = (delta_y_2_3/88)/(delta_y_1_2/63)
-            error_margin = 0.1
-            if(abs(obj_factor-mtg_factor) < error_margin):
-                print("It respect a magic card factor")
-                print("This factor is :", obj_factor)
-                print("The official mtg factor is : ", mtg_factor)
-                
-                # 63 × 88 mm a magic card size
+            # mtg_factor1 = 63/88
+            # mtg_factor2 = 88/63
 
-                # The size is made on the official magic the gathering card format
-                # unwrap the image with a set destination corners
-                dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
-                M = cv.getPerspectiveTransform(corners, dest_corners)
-                unwrapped = cv.warpPerspective(img, M, (630, 880))
+            # obj_factor1 = (delta_y_2_3)/(delta_y_1_2) *88/63
+            # obj_factor2 = (delta_y_2_3/88)/(delta_y_1_2/63)
 
-                list_image.append(unwrapped)
+
+            # error_margin = 0.1
+            # print("This factor is :", obj_factor1)
+            # print("The official mtg factor is : ", mtg_factor1)
+            # print("This factor is :", obj_factor2)
+            # print("The official mtg factor is : ", mtg_factor2)
+            # if(abs(obj_factor1-mtg_factor1) < error_margin or abs(obj_factor2-mtg_factor2) < error_margin):
+            #     print("It respect a magic card factor")
             
-            return list_image
+            # 63 × 88 mm a magic card size
+
+            # The size is made on the official magic the gathering card format
+            # unwrap the image with a set destination corners
+            dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
+            M = cv.getPerspectiveTransform(corners, dest_corners)
+            unwrapped = cv.warpPerspective(img, M, (630, 880))
+
+            list_image.append(unwrapped)
+    return list_image
         
 def display_and_write(list_image):
      # Display and write on all the found cards in the image
@@ -181,12 +187,18 @@ def display_and_write(list_image):
         cv.imwrite('images/Results/'+name+str(i)+'.png', img)
         i +=1
         cv.waitKey(0)   
+        
+def get_cards_in_picture(img):
+    img_edges = set_up_image(img)
+    list_image = detect_the_contours(img_edges, img) 
+    return list_image
+    
 ##
 # Main
 ##
-        
-img = cv.imread(filename)
-img_edges = set_up_image(img)
-list_image = detect_the_contours(img_edges, img) 
-display_and_write(list_image)
+if __name__ == "__main__" :        
+    img = cv.imread(filename)
+    img_edges = set_up_image(img)
+    list_image = detect_the_contours(img_edges, img) 
+    display_and_write(list_image)
  

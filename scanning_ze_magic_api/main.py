@@ -3,7 +3,13 @@ from flask import Flask, request, jsonify
 import os
 from PIL import Image
 import base64
+import cv2 as cv
+import numpy as np
 
+import DrawContours
+import DetectionReference
+import DetectionText
+import DetectionPT
 
 
 app = Flask(__name__)
@@ -18,21 +24,35 @@ def get_test():
 def processImage():
 
     file = request.files['file']
+    file_data = np.fromstring(file.read(), np.uint8)
+    img = cv.imdecode(file_data, cv.IMREAD_COLOR)
+    images = DrawContours.get_cards_in_picture(img)
+    print("DrawContours finished")
+
+    ColorsDict = DetectionReference.test_card(images[0])
+    print("-->",ColorsDict)
+    print("DetectionReference finished")
+
+    text = DetectionText.test_card(images[0])
+    print("-->",text)
+    print("DetectionText finished")
     
-    img = Image.open(file.stream)
-    img = img.convert('L')   # ie. convert to grayscale
+    PT = DetectionPT.test_card(images[0])
+    print("-->",PT)
+    print("DetectionPT finished")
+    #cv.imshow("test", images[0])
+    #cv.waitKey(0)
+
+    retval, buffer = cv.imencode('.jpg', images[0])
+    image_bytes = buffer.tobytes()
+    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
     
-    buffer = io.BytesIO()
-    img.save(buffer, 'png')
-    buffer.seek(0)
-    
-    data = buffer.read()
-    data = base64.b64encode(data).decode()
-    
+
+    print("About to return")
     return jsonify({
             "name": "Chandra Waifu",
             "extension": "Kaladesh",
-            "image": data,
+            "image": encoded_image,
             "creature_type": "Mega waifu material",
             "power": "6",
             "defense": "9",
@@ -41,10 +61,11 @@ def processImage():
             {
             "name": "Atraxa lol",
             "extension": "Phyrexia",
-            "image": data,
+            "image": encoded_image,
             "creature_type": "Running out of ideas for a joke",
             "power": "7",
             "defense": "7",
             "colors": ["w", "u", "g", "b"]
             }
           )
+
