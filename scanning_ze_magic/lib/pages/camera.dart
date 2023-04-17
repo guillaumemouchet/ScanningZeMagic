@@ -124,10 +124,12 @@ class DisplayPictureScreen extends StatelessWidget {
     final Dio dio = Dio();
 
     dio.options.receiveTimeout = Duration(seconds: 30);
+
     Response<String> response =
         await dio.post("http://10.0.2.2:5000/uploadImage", data: formData);
     print('Response status: ${response.statusCode}');
     print('Response data: ${response.data}');
+
     return response;
   }
 

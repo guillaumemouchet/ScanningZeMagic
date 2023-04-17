@@ -77,20 +77,22 @@ def what_color(imgResultGrey):
     # colorProbability.update({"Green" : is_color(imgResultGrey, filenameRefG)})
 
  # Update the each specific color probability
-    colorProbability.update({"White" :  (is_color(imgResultGrey, filenameRefW)+is_color(imgResultGrey, filenameRefWInternet))/2})
-    colorProbability.update({"blUe" : (is_color(imgResultGrey, filenameRefU)+is_color(imgResultGrey, filenameRefUInternet))/2})
-    colorProbability.update({"Black" : (is_color(imgResultGrey, filenameRefB)+is_color(imgResultGrey, filenameRefBInternet))/2})
-    colorProbability.update({"Red" : (is_color(imgResultGrey, filenameRefR)+is_color(imgResultGrey, filenameRefRInternet))/2})
-    colorProbability.update({"Green" : (is_color(imgResultGrey, filenameRefG)+is_color(imgResultGrey, filenameRefGInternet))/2})
+    colorProbability.update({"w" :  (is_color(imgResultGrey, filenameRefW)+is_color(imgResultGrey, filenameRefWInternet))/2})
+    colorProbability.update({"u" : (is_color(imgResultGrey, filenameRefU)+is_color(imgResultGrey, filenameRefUInternet))/2})
+    colorProbability.update({"b" : (is_color(imgResultGrey, filenameRefB)+is_color(imgResultGrey, filenameRefBInternet))/2})
+    colorProbability.update({"r" : (is_color(imgResultGrey, filenameRefR)+is_color(imgResultGrey, filenameRefRInternet))/2})
+    colorProbability.update({"g" : (is_color(imgResultGrey, filenameRefG)+is_color(imgResultGrey, filenameRefGInternet))/2})
     threshold = 0.5
-    listColors = {}  
+    listColors = []
+    dicColors = {}  
     
     #Get the colors that could be right (For multiple color cards)
     print("The card correspond to all those colors :")
     for key in colorProbability:
         if(colorProbability[key] > threshold):
             print("->", key)
-            listColors.update({key : colorProbability[key]})
+            listColors.append(key)
+            dicColors.update({key : colorProbability[key]})
     # Get the most probable color
     print("Most probable color is", max(colorProbability, key=colorProbability.get))
     return {"Most" : max(colorProbability, key=colorProbability.get), "listColors" : listColors}
@@ -107,7 +109,6 @@ def test_all_cards():
         print("-----------------------------------------------------")
         print("\t\t\t " + name + "\t\t\t")
         print("-----------------------------------------------------")
-
         imgResult = cv.imread(filenameResult+name)
 
         # take only top right corner

@@ -8,8 +8,9 @@ import numpy as np
 
 import DrawContours
 import DetectionReference
-import DetectionText
+import DetectionName
 import DetectionPT
+import DetectionCardType
 
 
 app = Flask(__name__)
@@ -29,43 +30,61 @@ def processImage():
     images = DrawContours.get_cards_in_picture(img)
     print("DrawContours finished")
 
-    ColorsDict = DetectionReference.test_card(images[0])
-    print("-->",ColorsDict)
-    print("DetectionReference finished")
-
-    text = DetectionText.test_card(images[0])
-    print("-->",text)
-    print("DetectionText finished")
+    response = []
     
-    PT = DetectionPT.test_card(images[0])
-    print("-->",PT)
-    print("DetectionPT finished")
-    #cv.imshow("test", images[0])
-    #cv.waitKey(0)
+    for image in images:
+        ColorsDict = DetectionReference.test_card(image)
+        print("-->",ColorsDict)
+        print("DetectionReference finished")
 
-    retval, buffer = cv.imencode('.jpg', images[0])
-    image_bytes = buffer.tobytes()
-    encoded_image = base64.b64encode(image_bytes).decode('utf-8')
-    
+        name = DetectionName.test_card(image)
+        print("-->",name)
+        print("DetectionText finished")
+        
+        cardType = DetectionCardType.test_card(image)
+        print("-->",cardType)
+        print("DetectionCardType finished")
+        
+        PT = DetectionPT.test_card(image)
+        print("-->",PT)
+        print("DetectionPT finished")
+        #cv.imshow("test", images[0])
+        #cv.waitKey(0)
 
-    print("About to return")
-    return jsonify({
-            "name": "Chandra Waifu",
+        retval, buffer = cv.imencode('.jpg', image)
+        image_bytes = buffer.tobytes()
+        encoded_image = base64.b64encode(image_bytes).decode('utf-8')
+        response.append({
+            "name": name,
             "extension": "Kaladesh",
             "image": encoded_image,
-            "creature_type": "Mega waifu material",
-            "power": "6",
-            "defense": "9",
-            "colors": ["r"]
-            },    
-            {
-            "name": "Atraxa lol",
-            "extension": "Phyrexia",
-            "image": encoded_image,
-            "creature_type": "Running out of ideas for a joke",
-            "power": "7",
-            "defense": "7",
-            "colors": ["w", "u", "g", "b"]
-            }
-          )
+            "creature_type": cardType,
+            "power": PT[0],
+            "defense": PT[1],
+            "colors": ColorsDict["listColors"]
+        })
+        
+        
+    return jsonify(response)
+    
+    print("About to return")
+    # return jsonify({
+    #         "name": name,
+    #         "extension": "Kaladesh",
+    #         "image": encoded_image,
+    #         "creature_type": cardType,
+    #         "power": PT[0],
+    #         "defense": PT[1],
+    #         "colors": ColorsDict["listColors"]
+    #         },    
+    #         {
+    #         "name": "Atraxa lol",
+    #         "extension": "Phyrexia",
+    #         "image": encoded_image,
+    #         "creature_type": "Running out of ideas for a joke",
+    #         "power": "7",
+    #         "defense": "7",
+    #         "colors": ["w", "u", "g", "b"]
+    #         }
+    #       )
 
