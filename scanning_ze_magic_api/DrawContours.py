@@ -2,7 +2,7 @@ import cv2 as cv
 import numpy as np 
 import math
 
-name = 'mtg_phone'
+name = 'red'
 filename = 'images/'+name+'.jpg'
 RATIO_Y =1
 
@@ -148,7 +148,7 @@ def detect_the_contours(img_edges, img):
 
             # We compare that the height is bigger than the width or else 
             if(delta_y_1_2 > delta_y_2_3):
-                print("rotation")
+                #print("rotation")
                 corners = np.array([corners[1],corners[2],corners[3],corners[0]])
                 
             # TODO Check if it correspond to a magic the gathering card format 
@@ -161,12 +161,12 @@ def detect_the_contours(img_edges, img):
 
 
             # error_margin = 0.1
-            # print("This factor is :", obj_factor1)
-            # print("The official mtg factor is : ", mtg_factor1)
-            # print("This factor is :", obj_factor2)
-            # print("The official mtg factor is : ", mtg_factor2)
+            # #print("This factor is :", obj_factor1)
+            # #print("The official mtg factor is : ", mtg_factor1)
+            # #print("This factor is :", obj_factor2)
+            # #print("The official mtg factor is : ", mtg_factor2)
             # if(abs(obj_factor1-mtg_factor1) < error_margin or abs(obj_factor2-mtg_factor2) < error_margin):
-            #     print("It respect a magic card factor")
+            #     #print("It respect a magic card factor")
             
             # 63 × 88 mm a magic card size
 
@@ -183,10 +183,10 @@ def display_and_write(list_image):
      # Display and write on all the found cards in the image
     i = 0
     for img in list_image:
-        cv.imshow('unwrapped', img)
+        #cv.imshow('unwrapped', img)
         cv.imwrite('images/Results/'+name+str(i)+'.png', img)
         i +=1
-        cv.waitKey(0)   
+        #cv.waitKey(0)   
         
 def get_cards_in_picture(img):
     img_edges = set_up_image(img)

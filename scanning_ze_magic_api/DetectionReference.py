@@ -4,47 +4,47 @@ from matplotlib import pyplot as plt
 import math
 import os
 # Personnal photos
-filenameRefW = 'images/references/white.png'
-filenameRefU = 'images/references/blue.png'
-filenameRefB = 'images/references/black.png'
-filenameRefR = 'images/references/red.png'
-filenameRefG = 'images/references/green.png'
+filename_ref_W = 'images/references/white.png'
+filename_ref_U = 'images/references/blue.png'
+filename_ref_B = 'images/references/black.png'
+filename_ref_R = 'images/references/red.png'
+filename_ref_G = 'images/references/green.png'
 
 # Photos from the internet
-filenameRefWInternet = 'images/references/W.png'
-filenameRefUInternet = 'images/references/U.png'
-filenameRefBInternet = 'images/references/B.png'
-filenameRefRInternet = 'images/references/R.png'
-filenameRefGInternet = 'images/references/G.png'
+filename_ref_WInternet = 'images/references/W.png'
+filename_ref_UInternet = 'images/references/U.png'
+filename_ref_BInternet = 'images/references/B.png'
+filename_ref_RInternet = 'images/references/R.png'
+filename_ref_GInternet = 'images/references/G.png'
 
 # Detection de référence
-filenameResult = 'images/Results/'
+filename_result = 'images/Results/'
 
-def is_color(imgResultGrey, filenameRef):
+def is_color(img_result_gray, filenameRef):
 
-    imgRef = cv.imread(filenameRef)
+    img_ref = cv.imread(filenameRef)
     
     # Change the size of the image for better detection
-    imgRef = cv.resize(imgRef, dsize=(math.ceil(30),math.ceil(30)))
+    img_ref = cv.resize(img_ref, dsize=(math.ceil(30),math.ceil(30)))
     
     
-    imgRefGrey = cv.cvtColor(imgRef,cv.COLOR_BGR2GRAY)
+    img_ref_gray = cv.cvtColor(img_ref,cv.COLOR_BGR2GRAY)
 
-    imgCopy = imgResultGrey.copy()
+    img_copy = img_result_gray.copy()
     
     # Match the reference with the copied image
     method = cv.TM_CCOEFF_NORMED
-    res = cv.matchTemplate(imgCopy,imgRefGrey,method)
+    res = cv.matchTemplate(img_copy,img_ref_gray,method)
 
     # Get the max for each result
-    listProbability = []
+    list_probability = []
     for i in res:
-        listProbability.append(np.amax(i))
+        list_probability.append(np.amax(i))
 
     ##
     # SHOW RESULTS
     ##
-    # w,h= imgRefGrey.shape
+    # w,h= img_ref_gray.shape
 
     # min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
 
@@ -60,48 +60,48 @@ def is_color(imgResultGrey, filenameRef):
     # plt.show()
 
     #Return the max probability
-    return max(listProbability)
+    return max(list_probability)
 
-def what_color(imgResultGrey):
-    colorProbability = {}
+def what_color(img_result_gray):
+    color_probability = {}
     # Two sets of references
     # One found on the internet 
     # The other are picture of me
     # Maybe try with both and keep the best values
     
     # # Update the each specific color probability
-    # colorProbability.update({"White" : is_color(imgResultGrey, filenameRefW)})
-    # colorProbability.update({"blUe" : is_color(imgResultGrey, filenameRefU)})
-    # colorProbability.update({"Black" : is_color(imgResultGrey, filenameRefB)})
-    # colorProbability.update({"Red" : is_color(imgResultGrey, filenameRefR)})
-    # colorProbability.update({"Green" : is_color(imgResultGrey, filenameRefG)})
+    # color_probability.update({"White" : is_color(img_result_gray, filename_ref_W)})
+    # color_probability.update({"blUe" : is_color(img_result_gray, filename_ref_U)})
+    # color_probability.update({"Black" : is_color(img_result_gray, filename_ref_B)})
+    # color_probability.update({"Red" : is_color(img_result_gray, filename_ref_R)})
+    # color_probability.update({"Green" : is_color(img_result_gray, filename_ref_G)})
 
  # Update the each specific color probability
-    colorProbability.update({"w" :  (is_color(imgResultGrey, filenameRefW)+is_color(imgResultGrey, filenameRefWInternet))/2})
-    colorProbability.update({"u" : (is_color(imgResultGrey, filenameRefU)+is_color(imgResultGrey, filenameRefUInternet))/2})
-    colorProbability.update({"b" : (is_color(imgResultGrey, filenameRefB)+is_color(imgResultGrey, filenameRefBInternet))/2})
-    colorProbability.update({"r" : (is_color(imgResultGrey, filenameRefR)+is_color(imgResultGrey, filenameRefRInternet))/2})
-    colorProbability.update({"g" : (is_color(imgResultGrey, filenameRefG)+is_color(imgResultGrey, filenameRefGInternet))/2})
+    color_probability.update({"w" :  (is_color(img_result_gray, filename_ref_W)+is_color(img_result_gray, filename_ref_WInternet))/2})
+    color_probability.update({"u" : (is_color(img_result_gray, filename_ref_U)+is_color(img_result_gray, filename_ref_UInternet))/2})
+    color_probability.update({"b" : (is_color(img_result_gray, filename_ref_B)+is_color(img_result_gray, filename_ref_BInternet))/2})
+    color_probability.update({"r" : (is_color(img_result_gray, filename_ref_R)+is_color(img_result_gray, filename_ref_RInternet))/2})
+    color_probability.update({"g" : (is_color(img_result_gray, filename_ref_G)+is_color(img_result_gray, filename_ref_GInternet))/2})
     threshold = 0.5
-    listColors = []
-    dicColors = {}  
+    list_colors = []
+    dic_Colors = {}  
     
     #Get the colors that could be right (For multiple color cards)
-    print("The card correspond to all those colors :")
-    for key in colorProbability:
-        if(colorProbability[key] > threshold):
-            print("->", key)
-            listColors.append(key)
-            dicColors.update({key : colorProbability[key]})
+    #print("The card correspond to all those colors :")
+    for key in color_probability:
+        if(color_probability[key] > threshold):
+            #print("->", key)
+            list_colors.append(key)
+            dic_Colors.update({key : color_probability[key]})
     # Get the most probable color
-    print("Most probable color is", max(colorProbability, key=colorProbability.get))
-    return {"Most" : max(colorProbability, key=colorProbability.get), "listColors" : listColors}
+    #print("Most probable color is", max(color_probability, key=color_probability.get))
+    return {"Most" : max(color_probability, key=color_probability.get), "list_colors" : list_colors}
 
 
 def test_all_cards():
     name_of_files = []
     # Get all cards in the result file
-    directories = os.listdir(filenameResult)
+    directories = os.listdir(filename_result)
     for file in directories:
         name_of_files.append(file)
      
@@ -109,22 +109,22 @@ def test_all_cards():
         print("-----------------------------------------------------")
         print("\t\t\t " + name + "\t\t\t")
         print("-----------------------------------------------------")
-        imgResult = cv.imread(filenameResult+name)
+        img_result = cv.imread(filename_result+name)
 
         # take only top right corner
-        w,h,z= imgResult.shape
-        img_crop= imgResult[0:100, h-200:h]
+        w,h,z= img_result.shape
+        img_crop= img_result[0:100, h-250:h]
         #convert to grey
-        imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
-        what_color(imgResultGrey)
+        img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
+        what_color(img_result_gray)
 
-def test_card(imgResult):
+def test_card(img_result):
     # take only top right corner
-    w,h,z= imgResult.shape
-    img_crop= imgResult[0:100, h-200:h]
+    w,h,z= img_result.shape
+    img_crop= img_result[0:100, h-250:h]
     #convert to grey
-    imgResultGrey = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
-    return what_color(imgResultGrey)
+    img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
+    return what_color(img_result_gray)
 ##
 # MAIN
 ##

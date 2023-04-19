@@ -88,7 +88,7 @@ class CameraDisplayState extends State<CameraDisplay> {
             );
           } catch (e) {
             // If an error occurs, log the error to the console.
-            print(e);
+            #print(e);
           }
         },
         child: const Icon(Icons.camera_alt),
@@ -105,7 +105,7 @@ class DisplayPictureScreen extends StatelessWidget {
   //https://stackoverflow.com/questions/44841729/how-to-upload-images-to-server-in-flutter/49645074#49645074
   Future<Response<String>> uploadImage(File file) async {
     String fileName = file.path.split('/').last;
-    print(file.path);
+    #print(file.path);
     final Dio dio = Dio();
     FormData formData = FormData.fromMap({
       "file": await MultipartFile.fromFile(file.path, filename: fileName),
@@ -127,8 +127,8 @@ class DisplayPictureScreen extends StatelessWidget {
 
     Response<String> response =
         await dio.post("http://10.0.2.2:5000/uploadImage", data: formData);
-    print('Response status: ${response.statusCode}');
-    print('Response data: ${response.data}');
+    #print('Response status: ${response.statusCode}');
+    #print('Response data: ${response.data}');
 
     return response;
   }
@@ -143,7 +143,7 @@ class DisplayPictureScreen extends StatelessWidget {
           child: Column(children: [
             ElevatedButton(
                 onPressed: () async {
-                  print("sending");
+                  #print("sending");
                   try {
                     //final response = await uploadImage(File(imagePath));
                     final response = await sendAssetImage();
@@ -154,7 +154,7 @@ class DisplayPictureScreen extends StatelessWidget {
                                   response: response,
                                 )));
                   } on Error catch (e) {
-                    print(e);
+                    #print(e);
                   }
                 },
                 child: const Text("Submit this picture")),
