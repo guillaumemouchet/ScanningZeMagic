@@ -36,7 +36,7 @@ def replace_seven(result):
         if(result[1] == "7" and result[2] != "/"):
             result[1] = "/"
     except Exception :
-        print("No index 1 in string")
+        print("")
     return result
 
 def what_text(img_result_gray):

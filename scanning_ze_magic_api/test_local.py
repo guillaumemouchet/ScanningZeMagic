@@ -45,25 +45,31 @@ def processImage(img_result):
         #print("-->",CMC)
         #print("\tDetectionCMC finished")
         
-        # Traitement du CMC dépendament de la couleur
-        total = 0
+        # Treating the CMC depending on the color
+        totalCMC = 0
         # if it has a number of color equal to the number of circle the CMC is the number of circles
         if(len(ColorsDict["list_colors"])==CMC[0]):
-            total = CMC[0]
+            totalCMC = CMC[0]
         elif(len(ColorsDict["list_colors"])==0):# if it's color less, we need to keep only the value in the circles
-            total = CMC[1]
+            totalCMC = CMC[1]
         else:  #if it has more circles than the number of color
-            total = CMC[0]-1 + CMC[1]  #you need to add the value in the circle with the number of circles (-1 for the circle with the values in it)
+            totalCMC = CMC[0]-1 + CMC[1]  #you need to add the value in the circle with the number of circles (-1 for the circle with the values in it)
 
         response.append({
             "name": name,
-            "CMC": total,
+            "CMC": totalCMC,
             "creature_type": cardType,
             "power": PT[0],
             "defense": PT[1],
             "colors": ColorsDict["list_colors"]
         })
-        
+
+        # Vanilla Test
+        if(totalCMC<=(PT[0]+PT[1])/2):
+            print("The card pass the Vanilla test and could be good in draft")
+        else:
+            print("The stats of the cards are weak, it may not be the best option for a draft")
+                 
     print("--------------------------------------------------------")
     print(response)
     print("--------------------------------------------------------")
