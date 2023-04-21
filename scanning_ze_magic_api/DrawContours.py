@@ -35,6 +35,7 @@ def set_up_image(img):
     #Normalize the copied image copied
     img_normalized = np.zeros((800, 800))
     img_normalized = cv.normalize(img_copy,  img_normalized, 0, 255, cv.NORM_MINMAX)
+    
     # convert to gray
     img_grey = cv.cvtColor(img_normalized,cv.COLOR_BGR2GRAY)
     
@@ -53,9 +54,6 @@ def set_up_image(img):
 def detect_the_contours(img_edges, img):
     #find contours
     contours, hierarchy = cv.findContours(img_edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-
-    # 63 × 88 mm a magic card size
-
     ##
     # In the first place the contours where filtered depending on a max and min area
     # But it always changed depending on the resolution of the image
@@ -75,7 +73,7 @@ def detect_the_contours(img_edges, img):
     #contours = [cnt for cnt in contours if cv.contourArea(cnt) > min_area and cv.contourArea(cnt) < max_area] 
 
 
-    # We create approximation of the contour to see if it can correspond to a magic card
+    # We create approximation of the contour to see if it can correspond to a card
     list_image = []
     for contour in contours:
         approx = cv.approxPolyDP(contour,  0.1 * cv.arcLength(contour, True), True)
@@ -139,8 +137,8 @@ def detect_the_contours(img_edges, img):
             # if angle < 90:
             #     unwrapped = cv.rotate(unwrapped, cv.ROTATE_90_COUNTERCLOCKWISE) 
             
-            # A magic card format is 63 × 88 mm a magic card size
             # The deltas are calculated by comparing X axis and Y axis
+            
             delta_y_1_2 = math.pow(abs(corners[0][1]-corners[1][1]),2)+math.pow(abs(corners[0][0]-corners[1][0]),2)
             delta_y_2_3 = math.pow(abs(corners[1][1]-corners[2][1]),2)+math.pow(abs(corners[1][0]-corners[2][0]),2)
             
@@ -150,8 +148,12 @@ def detect_the_contours(img_edges, img):
             if(delta_y_1_2 > delta_y_2_3):
                 #print("rotation")
                 corners = np.array([corners[1],corners[2],corners[3],corners[0]])
-                
+            
+
             # TODO Check if it correspond to a magic the gathering card format 
+            # A magic card format is 63 × 88 mm a magic card size
+            # The size is made on the official magic the gathering card format
+
             # Check if it respects a magic the gathering card format
             # mtg_factor1 = 63/88
             # mtg_factor2 = 88/63
@@ -168,9 +170,8 @@ def detect_the_contours(img_edges, img):
             # if(abs(obj_factor1-mtg_factor1) < error_margin or abs(obj_factor2-mtg_factor2) < error_margin):
             #     #print("It respect a magic card factor")
             
-            # 63 × 88 mm a magic card size
-
-            # The size is made on the official magic the gathering card format
+            # End of TODO
+            
             # unwrap the image with a set destination corners
             dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
             M = cv.getPerspectiveTransform(corners, dest_corners)
@@ -188,6 +189,9 @@ def display_and_write(list_image):
         i +=1
         #cv.waitKey(0)   
         
+
+# Function to be called by the main
+# returns list of all cards found in the image
 def get_cards_in_picture(img):
     img_edges = set_up_image(img)
     list_image = detect_the_contours(img_edges, img) 

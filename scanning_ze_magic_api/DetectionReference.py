@@ -3,6 +3,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 import math
 import os
+from os import listdir
+from os.path import isfile, join
 # Personnal photos
 filename_ref_W = 'images/references/white.png'
 filename_ref_U = 'images/references/blue.png'
@@ -22,12 +24,13 @@ filename_result = 'images/Results/'
 
 def is_color(img_result_gray, filenameRef):
 
+    #open reference image
     img_ref = cv.imread(filenameRef)
     
     # Change the size of the image for better detection
     img_ref = cv.resize(img_ref, dsize=(math.ceil(30),math.ceil(30)))
     
-    
+    #Convert to gray
     img_ref_gray = cv.cvtColor(img_ref,cv.COLOR_BGR2GRAY)
 
     img_copy = img_result_gray.copy()
@@ -45,11 +48,8 @@ def is_color(img_result_gray, filenameRef):
     # SHOW RESULTS
     ##
     # w,h= img_ref_gray.shape
-
     # min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
-
     # top_left = max_loc
-
     # bottom_right = (top_left[0] + w, top_left[1] + h)
     # cv.rectangle(imgCopy,top_left, bottom_right, 255, 2)
     # plt.subplot(121),plt.imshow(res,cmap = 'gray')
@@ -58,8 +58,10 @@ def is_color(img_result_gray, filenameRef):
     # plt.title('Rectangle détecté'), plt.xticks([]), plt.yticks([])
     # plt.suptitle(method)
     # plt.show()
+    ##
+    # END SHOW RESULTS
+    ##
 
-    #Return the max probability
     return max(list_probability)
 
 def what_color(img_result_gray):
@@ -67,43 +69,36 @@ def what_color(img_result_gray):
     # Two sets of references
     # One found on the internet 
     # The other are picture of me
-    # Maybe try with both and keep the best values
-    
-    # # Update the each specific color probability
-    # color_probability.update({"White" : is_color(img_result_gray, filename_ref_W)})
-    # color_probability.update({"blUe" : is_color(img_result_gray, filename_ref_U)})
-    # color_probability.update({"Black" : is_color(img_result_gray, filename_ref_B)})
-    # color_probability.update({"Red" : is_color(img_result_gray, filename_ref_R)})
-    # color_probability.update({"Green" : is_color(img_result_gray, filename_ref_G)})
+    # The best values is a mean of both
 
- # Update the each specific color probability
+    # Update the each specific color probability
     color_probability.update({"w" :  (is_color(img_result_gray, filename_ref_W)+is_color(img_result_gray, filename_ref_WInternet))/2})
     color_probability.update({"u" : (is_color(img_result_gray, filename_ref_U)+is_color(img_result_gray, filename_ref_UInternet))/2})
     color_probability.update({"b" : (is_color(img_result_gray, filename_ref_B)+is_color(img_result_gray, filename_ref_BInternet))/2})
     color_probability.update({"r" : (is_color(img_result_gray, filename_ref_R)+is_color(img_result_gray, filename_ref_RInternet))/2})
     color_probability.update({"g" : (is_color(img_result_gray, filename_ref_G)+is_color(img_result_gray, filename_ref_GInternet))/2})
-    threshold = 0.5
-    list_colors = []
-    dic_Colors = {}  
     
-    #Get the colors that could be right (For multiple color cards)
+    # The threshold to know if the card can be the corresponding color
+    threshold = 0.5
+    
+    list_colors = []
+    
     #print("The card correspond to all those colors :")
+    # We have the most probable color, and a list of all colors that could correspond (for multiple colors images)
     for key in color_probability:
         if(color_probability[key] > threshold):
             #print("->", key)
             list_colors.append(key)
-            dic_Colors.update({key : color_probability[key]})
-    # Get the most probable color
-    #print("Most probable color is", max(color_probability, key=color_probability.get))
+    
     return {"Most" : max(color_probability, key=color_probability.get), "list_colors" : list_colors}
 
 
 def test_all_cards():
     name_of_files = []
     # Get all cards in the result file
-    directories = os.listdir(filename_result)
-    for file in directories:
-        name_of_files.append(file)
+    files = [f for f in listdir(filename_result) if isfile(join(filename_result, f))]
+    for filename in files:
+        name_of_files.append(filename)
      
     for name in name_of_files:
         print("-----------------------------------------------------")
@@ -116,8 +111,9 @@ def test_all_cards():
         img_crop= img_result[0:100, h-250:h]
         #convert to grey
         img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
-        what_color(img_result_gray)
+        print(what_color(img_result_gray))
 
+# Function to be called by the main
 def test_card(img_result):
     # take only top right corner
     w,h,z= img_result.shape
@@ -130,5 +126,4 @@ def test_card(img_result):
 ##
 if __name__ == "__main__" :        
     test_all_cards()
-    # img = cv.imread('images/Results/mtg_phone0.png')
-    # test_card(img)
+

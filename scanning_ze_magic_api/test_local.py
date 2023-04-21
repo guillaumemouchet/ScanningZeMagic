@@ -45,18 +45,16 @@ def processImage(img_result):
         #print("-->",CMC)
         #print("\tDetectionCMC finished")
         
-        # il faut faire un traitement sur le CMC par rapport aux couleurs
+        # Traitement du CMC dépendament de la couleur
         total = 0
+        # if it has a number of color equal to the number of circle the CMC is the number of circles
         if(len(ColorsDict["list_colors"])==CMC[0]):
             total = CMC[0]
-        else:
-            total = CMC[0]-1 + CMC[1]
-        #cv.imshow("test", images[0])
-        #cv.waitKey(0)
-        
-        # retval, buffer = cv.imencode('.jpg', image)
-        # image_bytes = buffer.tobytes()
-        # encoded_image = base64.b64encode(image_bytes).decode('utf-8')
+        elif(len(ColorsDict["list_colors"])==0):# if it's color less, we need to keep only the value in the circles
+            total = CMC[1]
+        else:  #if it has more circles than the number of color
+            total = CMC[0]-1 + CMC[1]  #you need to add the value in the circle with the number of circles (-1 for the circle with the values in it)
+
         response.append({
             "name": name,
             "CMC": total,

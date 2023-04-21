@@ -6,10 +6,14 @@ import os
 from pytesseract import Output
 import numbers
 import re
+from os import listdir
+from os.path import isfile, join
 # Detection de référence
 filename_result = 'images/Results/'
 pytesseract.pytesseract.tesseract_cmd = 'C:/Program Files/Tesseract-OCR/tesseract.exe'
 
+# We can find some parasistic values with tesseract
+# A bit a regex can help to find the needed values with a /
 def find_match(result):
     pattern = re.compile(r'\d{1,2}/\d{1,2}')
     power, toughness = -1, -1
@@ -25,17 +29,24 @@ def find_match(result):
                 power, toughness = -1, -1
     return power, toughness
 
+# / can often be mismatch with 7
+# We can think that if the second value is a 7 that it could be a / instead
 def replace_seven(result):
     try:
-        if(result[1] == "7"):
+        if(result[1] == "7" and result[2] != "/"):
             result[1] = "/"
     except Exception :
         print("No index 1 in string")
     return result
 
 def what_text(img_result_gray):
+    # In the first place many actions where made on the image but none where giving a good results
+    # After many tests and adaptation medianBlur and GaussianBlur where giving the best results
+    # So if the medianBlur does'nt work we try with a GaussianBlur, we could add another if the results are not better
     gray = cv.medianBlur(img_result_gray, 3)
+    
     # Get the data of the image with Tesseract
+    # The config is what tesseract recommands for number, the whitelist helps to keep only possible values
     results = pytesseract.image_to_string(gray, config="--psm 6 --oem 3 -c tessedit_char_whitelist=0123456789/*X", lang="eng")#
 
     result = replace_seven(list(results))    
@@ -53,16 +64,14 @@ def what_text(img_result_gray):
     
         power, toughness = find_match(result)
 
-    #print(f'Power: {power}, Toughness: {toughness}')
-    # cv.imshow("im2", gray)
-    # cv.waitKey(0)
     return (power, toughness)
 
 def test_all_cards():
     name_of_files = []
-    directories = os.listdir(filename_result)
-    for file in directories:
-        name_of_files.append(file)
+    # Get all cards in the result file
+    files = [f for f in listdir(filename_result) if isfile(join(filename_result, f))]
+    for filename in files:
+        name_of_files.append(filename)
 
     for name in name_of_files:
         print("-----------------------------------------------------")
@@ -79,7 +88,7 @@ def test_all_cards():
         img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
 
         print(what_text(img_result_gray))
-
+# Function to be called by the main
 def test_card(img_result):
     w,h,z= img_result.shape
 
@@ -95,5 +104,3 @@ def test_card(img_result):
 ##
 if __name__ == "__main__" :
     test_all_cards()
-    # img = cv.imread('images/Results/mtg_phone0.png')
-    # #print(test_card(img))
