@@ -67,20 +67,23 @@ def processImage():
         # Vanilla Test
         if(totalCMC<=(PT[0]+PT[1])/2):
             print("The card pass the Vanilla test and could be good in draft")
+            is_vanilla = "true"
         else:
             print("The stats of the cards are weak, it may not be the best option for a draft")
+            is_vanilla = "false"
             
         retval, buffer = cv.imencode('.jpg', image)
         image_bytes = buffer.tobytes()
         encoded_image = base64.b64encode(image_bytes).decode('utf-8')
         response.append({
             "name": name,
-            "extension": "Kaladesh",
+            "cmc": totalCMC,
             "image": encoded_image,
             "creature_type": cardType,
             "power": PT[0],
-            "defense": PT[1],
-            "colors": ColorsDict["list_colors"]
+            "toughness": PT[1],
+            "colors": ColorsDict["list_colors"],
+            "isVanilla": is_vanilla
         })
         
         

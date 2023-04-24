@@ -128,7 +128,7 @@ def test_all_cards():
 # Function to be called by the main
 def test_card(img_result):
     # take only top left corner
-    img_crop = img_result[0:100, 0:400]
+    img_crop = img_result[0:100, 0:500]
     #convert to grey
     img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
     return what_text(img_result_gray)

@@ -22,36 +22,51 @@ class CardItemDisplay extends StatelessWidget {
                 height: MediaQuery.of(context).size.width * 0.65,
                 child: Image.memory(card.image)),
             const SizedBox(height: 5),
-            Text(
-              card.name,
-              style: const TextStyle(
-                  color: Colors.pinkAccent,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  card.name,
+                  style: const TextStyle(
+                      color: Colors.pinkAccent,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold),
+                ),
+                card.colors.isNotEmpty
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: card.colors
+                            .map(
+                              (color) => SvgPicture.asset(
+                                'assets/img/$color.svg',
+                              ),
+                            )
+                            .toList(),
+                      )
+                    : Container(),
+              ],
             ),
             const SizedBox(height: 5),
             Text(card.creatureType),
             const SizedBox(height: 5),
             Text(
-              card.extension,
+              'CMC: ${card.cmc}',
               style: const TextStyle(color: Colors.black),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 5),
-            card.colors.isNotEmpty
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: card.colors
-                        .map(
-                          (color) => SvgPicture.asset(
-                            'assets/img/$color.svg',
-                          ),
-                        )
-                        .toList(),
-                  )
-                : Container(),
+            Text('${card.power}/${card.toughness}'),
             const SizedBox(height: 5),
-            Text('${card.power}/${card.defense}'),
+            Text(
+              card.isVanilla == "true"
+                  ? "This card passes the vanilla test"
+                  : "This card does not pass the vanilla test",
+              style: TextStyle(
+                  color: card.isVanilla == "true" ? Colors.teal : Colors.pink,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
           ],
         ),
       ),
