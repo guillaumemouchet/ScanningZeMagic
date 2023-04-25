@@ -4,6 +4,9 @@
 Ce projet de traitement d'images à pour objectif d'analyser les données contenues sur une carte Magic afin de déterminer si celle-ci passe le [Vanilla Test](https://mtg.fandom.com/wiki/Vanilla). Pour ce faire, nous avons réalisé une application Flutter (smartphone multiplateforme) qui prend une ou plusieurs cartes en photos. Ces images sont envoyées à une API Flask qui se charge du traitement d'images grâce à OpenCV et renvoie un JSON contenant les informations tirées des images.
 
 ## Tester l'application
+### Installer tesseract
+Tesseract à été utilisé pour faire de la détection de texte, il doit être installé manuellement.
+Pour cela il suffit de suivre ce [Tuto](https://stackoverflow.com/questions/50951955/pytesseract-tesseractnotfound-error-tesseract-is-not-installed-or-its-not-i) et s'assurer qu'il a bien été télécharger à ce chemin d'accès "'C:/Program Files/Tesseract-OCR/tesseract.exe'", sinon l'application ne pourra pas fonctionner.
 ### Lancer l'app Flask
 Le fichier `requirements.txt` contient les libraires nécessaires afin de lancer l'application. 
 Pour les télécharger : `pip install -r requirements.txt`
