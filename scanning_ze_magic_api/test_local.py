@@ -20,30 +20,19 @@ filename_result = 'images/'
 def processImage(img_result):
 
     images = DrawContours.get_cards_in_picture(img_result)
-    #print("DrawContours finished")
 
     response = []
     
     for image in images:
         ColorsDict = DetectionReference.test_card(image)
-        #print("-->",ColorsDict)
-        #print("\tDetectionReference finished")
 
         name = DetectionName.test_card(image)
-        #print("-->",name)
-        #print("\tDetectionText finished")
-        
+
         cardType = DetectionCardType.test_card(image)
-        #print("-->",cardType)
-        #print("\tDetectionCardType finished")
-        
+
         PT = DetectionPT.test_card(image)
-        #print("-->",PT)
-        #print("\tDetectionPT finished")
-        
+
         CMC = DetectionCMC.test_card(image)
-        #print("-->",CMC)
-        #print("\tDetectionCMC finished")
         
         # Treating the CMC depending on the color
         totalCMC = 0
@@ -60,7 +49,7 @@ def processImage(img_result):
             "CMC": totalCMC,
             "creature_type": cardType,
             "power": PT[0],
-            "defense": PT[1],
+            "toughness": PT[1],
             "colors": ColorsDict["list_colors"]
         })
 
@@ -70,9 +59,7 @@ def processImage(img_result):
         else:
             print("The stats of the cards are weak, it may not be the best option for a draft")
                  
-    print("--------------------------------------------------------")
     print(response)
-    print("--------------------------------------------------------")
 
 
 def test_all_cards():

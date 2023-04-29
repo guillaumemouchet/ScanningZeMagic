@@ -2,7 +2,6 @@ import cv2 as cv
 import numpy as np
 from matplotlib import pyplot as plt
 import math
-import os
 from os import listdir
 from os.path import isfile, join
 # Personnal photos
@@ -45,7 +44,7 @@ def is_color(img_result_gray, filenameRef):
         list_probability.append(np.amax(i))
 
     ##
-    # SHOW RESULTS
+    # Display for DEBUG purpose
     ##
     # w,h= img_ref_gray.shape
     # min_val, max_val, min_loc, max_loc = cv.minMaxLoc(res)
@@ -59,7 +58,7 @@ def is_color(img_result_gray, filenameRef):
     # plt.suptitle(method)
     # plt.show()
     ##
-    # END SHOW RESULTS
+    # END Display for DEBUG purpose
     ##
 
     return max(list_probability)
@@ -83,11 +82,9 @@ def what_color(img_result_gray):
     
     list_colors = []
     
-    #print("The card correspond to all those colors :")
     # We have the most probable color, and a list of all colors that could correspond (for multiple colors images)
     for key in color_probability:
         if(color_probability[key] > threshold):
-            #print("->", key)
             list_colors.append(key)
     
     return {"Most" : max(color_probability, key=color_probability.get), "list_colors" : list_colors}

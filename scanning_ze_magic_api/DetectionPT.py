@@ -33,7 +33,7 @@ def find_match(result):
 # We can think that if the second value is a 7 that it could be a / instead
 def replace_seven(result):
     try:
-        if(result[1] == "7" and result[2] != "/"):
+        if(result[1] == "7" and result[2] != "/" or result[2] == "7" and result[1] != "/"):
             result[1] = "/"
     except Exception :
         print("")
@@ -88,6 +88,7 @@ def test_all_cards():
         img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
 
         print(what_text(img_result_gray))
+        
 # Function to be called by the main
 def test_card(img_result):
     w,h,z= img_result.shape

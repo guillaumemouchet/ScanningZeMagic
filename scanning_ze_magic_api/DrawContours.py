@@ -28,9 +28,6 @@ def round_ratio(x):
 def set_up_image(img):
     
     img_copy = resize_image(img)
-        
-    #cv.imshow("resized",img_copy)
-    #cv.waitKey(0)
 
     #Normalize the copied image copied
     img_normalized = np.zeros((800, 800))
@@ -38,10 +35,6 @@ def set_up_image(img):
     
     # convert to gray
     img_grey = cv.cvtColor(img_normalized,cv.COLOR_BGR2GRAY)
-    
-    ## 
-    # A threshold was made but a GaussianBlur seemed better
-    ## 
     
     # apply Gaussian blur to reduce noise
     img_blur = cv.GaussianBlur(img_grey, (5, 5), 0)
@@ -54,24 +47,6 @@ def set_up_image(img):
 def detect_the_contours(img_edges, img):
     #find contours
     contours, hierarchy = cv.findContours(img_edges, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
-    ##
-    # In the first place the contours where filtered depending on a max and min area
-    # But it always changed depending on the resolution of the image
-    # The solution is that all the copied image are resized to 720x1080
-    # But the cut on the is made on the original image
-    # The old code is left here but can be removed once explained in the paper
-    ##
-    ################# Not needed since the images are resized ###############################
-    #min_area = 18000
-    #max_area = min_area + 12000
-    # 48000-60000 best for multiple_image.jpg => 1280x720 pixels => 37.5
-    # TODO-TODO best for all cards => 720xXXX =>                
-    # 8000-20000 best for mtg_cards_4.jpeg => 474x754 pixels => 16.8
-    # The conclusion is the best spacing between cards is 12'000
-    # but depends on the cards size in the first place
-    # Can a pre-traitement can be done to determine the best spacing for a specific image
-    #contours = [cnt for cnt in contours if cv.contourArea(cnt) > min_area and cv.contourArea(cnt) < max_area] 
-
 
     # We create approximation of the contour to see if it can correspond to a card
     list_image = []
@@ -89,54 +64,11 @@ def detect_the_contours(img_edges, img):
 
             # Crop card region from image
             x, y, w, h = cv.boundingRect(approx)
-            #card = img[y:y+h, x:x+w]
             
             #unwrap the found images
             rect = cv.minAreaRect(approx)        
-            corners = cv.boxPoints(rect).astype(np.float32)
-
-            ##
-            # In the first place to detect the orientation a comparaison of the corners where made
-            # But it wasn't a 100% effective, espacially for tilted cards
-            # We can see that the a a's are not in the same place in the 2 images
-            # Here are exampled on how where structured the image
-                            # Not tilted images
-                            # GOOD IMAGE CORNERS
-                            # corners [[a. b.]
-                            #         [c.  b.]
-                            #         [c.  d.]
-                            #         [a.  d.]]
-                            # WRONG IMAGE CORNERS
-                            # corners [[a. d.]
-                            #         [a.  b.]
-                            #         [c.  b.]
-                            #         [c.  d.]]
-                            
-                            # Tilted images
-                            # GOOD IMAGE CORNERS
-                            # corners [[a. b.]
-                                    #  [a. c.]
-                                    #  [d. c.]
-                                    #  [d. b.]]
-                            # WRONG IMAGE CORNERS
-                            # corners [[a. b.]
-                                    #  [d. b.]
-                                    #  [d. c.]
-                                    #  [a. c.]]
-            # Here where how the deltas where calculated
-            # error_value = 10
-            # delta_a = abs(corners[0][0]-corners[3][0])
-            # delta_c = abs(corners[1][0]-corners[2][0])
-            # delta_b = abs(corners[0][1]-corners[1][1])
-            # delta_d = abs(corners[2][1]-corners[3][1])
-            #  if(delta_a >= error_value): # if we are bigger than the error, we need to rotate the corners to put them in the right order
-            #     corners = np.array([corners[1],corners[2],corners[3],corners[0]])
-            # # Il faut que le premier corner soit celui en bas à gauche de l'image
-            # Another way to rotate the image but the proportion are not kept and the image become wide
-            # angle = rect[-1]
-            # if angle < 90:
-            #     unwrapped = cv.rotate(unwrapped, cv.ROTATE_90_COUNTERCLOCKWISE) 
             
+            corners = cv.boxPoints(rect).astype(np.float32)
             # The deltas are calculated by comparing X axis and Y axis
             
             delta_y_1_2 = math.pow(abs(corners[0][1]-corners[1][1]),2)+math.pow(abs(corners[0][0]-corners[1][0]),2)
@@ -146,31 +78,8 @@ def detect_the_contours(img_edges, img):
 
             # We compare that the height is bigger than the width or else 
             if(delta_y_1_2 > delta_y_2_3):
-                #print("rotation")
                 corners = np.array([corners[1],corners[2],corners[3],corners[0]])
             
-
-            # TODO Check if it correspond to a magic the gathering card format 
-            # A magic card format is 63 × 88 mm a magic card size
-            # The size is made on the official magic the gathering card format
-
-            # Check if it respects a magic the gathering card format
-            # mtg_factor1 = 63/88
-            # mtg_factor2 = 88/63
-
-            # obj_factor1 = (delta_y_2_3)/(delta_y_1_2) *88/63
-            # obj_factor2 = (delta_y_2_3/88)/(delta_y_1_2/63)
-
-
-            # error_margin = 0.1
-            # #print("This factor is :", obj_factor1)
-            # #print("The official mtg factor is : ", mtg_factor1)
-            # #print("This factor is :", obj_factor2)
-            # #print("The official mtg factor is : ", mtg_factor2)
-            # if(abs(obj_factor1-mtg_factor1) < error_margin or abs(obj_factor2-mtg_factor2) < error_margin):
-            #     #print("It respect a magic card factor")
-            
-            # End of TODO
             
             # unwrap the image with a set destination corners
             dest_corners = np.array([[0, 0], [630, 0], [630, 880], [0, 880]], dtype=np.float32)
@@ -181,13 +90,11 @@ def detect_the_contours(img_edges, img):
     return list_image
         
 def display_and_write(list_image):
-     # Display and write on all the found cards in the image
+    # Display and write on all the found cards in the image
     i = 0
     for img in list_image:
-        #cv.imshow('unwrapped', img)
         cv.imwrite('images/Results/'+name+str(i)+'.png', img)
         i +=1
-        #cv.waitKey(0)   
         
 
 # Function to be called by the main

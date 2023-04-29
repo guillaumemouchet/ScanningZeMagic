@@ -2,7 +2,6 @@ import cv2 as cv
 import pytesseract
 import numpy as np
 from matplotlib import pyplot as plt
-import os
 from pytesseract import Output
 from os import listdir
 from os.path import isfile, join
@@ -66,18 +65,15 @@ def test_all_cards():
 
         img_result = cv.imread(filename_result+name)
 
-    # take only top middle
+        # take only middle
         img_crop = img_result[450:550, 0:525]
-        #convert to grey
-        cv.imshow("test", img_crop)
-        cv.waitKey(0)
         img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
 
         print(what_text(img_result_gray))
 
 # Function to be called by the main
 def test_card(img_result):
-    # take only top middle
+    # take only middle
     img_crop = img_result[450:550, 0:525]
     #convert to grey
     img_result_gray = cv.cvtColor(img_crop,cv.COLOR_BGR2GRAY)
