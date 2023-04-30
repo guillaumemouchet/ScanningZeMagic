@@ -21,7 +21,7 @@ Il faut dans un premier temps [installer Flutter](https://docs.flutter.dev/get-s
 Si vous travaillez sur VSCode, il faut aussi ajouter l'extension Flutter. (F5 pour lancer l'app)
 
 ### Tester le traitement d'images
-Afin de tester les fonctionnalités en local, il suffit de lancer `test_local.py`.
+Afin de tester les fonctionnalités en local, il suffit de lancer `test_local.py`. Ce fichier effectuera les différents traitements sur les images contenues dans le dossier images.
 
 ## Remarques
 Certaines fonctionnalités sont "hardcodées", l'envoi de l'images est simulé et envoie une image stockée dans les ressources. 
