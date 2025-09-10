@@ -29,7 +29,7 @@ L'application mobile communique avec le LocalHost de l'ordinateur.
 L'émulateur et le serveur doivent être sur la même machine (si le serveur n'est pas déployé évidemment)
 
 ## Résultats
-Une vidéo de démonstration est disponible dans le dossier `screenshots`
+Une vidéo de démonstration est disponible dans le dossier `screenshots`.
 ![Camera input](./screenshots/img_display.png)
 ![Result](./screenshots/result.png)
 
